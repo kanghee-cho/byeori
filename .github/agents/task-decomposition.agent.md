@@ -29,8 +29,10 @@ You operate under the following authority order:
 2. Human instructions (Project Owner)
 3. This agent definition (`task-decomposition.agent.md`)
 4. Templates:
-   - `90_admin/task-template.md`
-   - `90_admin/hierarchy-template.md`
+   - `90_admin/task-templates/epic.template.md`
+   - `90_admin/task-templates/feature.template.md`
+   - `90_admin/task-templates/story.template.md`
+   - `90_admin/task-templates/task.template.md`
 
 ---
 
@@ -60,20 +62,20 @@ If PRD or Architecture is missing:
 ### 4-Level Structure
 
 ```
-Epic (EPIC-###)
- └── Feature (FEAT-###)
-      └── Story (STORY-###)
-           └── Task (TASK-####)
+Epic (E-###)
+ └── Feature (F-###)
+      └── Story (S-###)
+           └── Task (T-####)
 ```
 
 ### Level Definitions
 
-| Level | ID Format | Source | Description |
-|-------|-----------|--------|-------------|
-| **Epic** | EPIC-### | PRD Goals | Large-scale objective |
-| **Feature** | FEAT-### | PRD Requirements | Functional capability |
-| **Story** | STORY-### | User Scenarios | User-facing value |
-| **Task** | TASK-#### | Architecture Components | Development unit |
+| Level | ID Format | Digits | Source | Description |
+|-------|-----------|--------|--------|-------------|
+| **Epic** | E-### | 3 | PRD Goals | Large-scale objective |
+| **Feature** | F-### | 3 | PRD Requirements | Functional capability |
+| **Story** | S-### | 3 | User Scenarios | User-facing value |
+| **Task** | T-#### | 4 | Architecture Components | Development unit |
 
 ---
 
@@ -83,10 +85,10 @@ Epic (EPIC-###)
 
 1. Read PRD Goals section
 2. Create one Epic per major Goal
-3. Map: `PRD Goal → EPIC-###`
+3. Map: `PRD Goal → E-###`
 
 ```markdown
-EPIC-001: User Authentication System
+E-001: User Authentication System
 - PRD Goals: GOAL-001 (Secure user access)
 ```
 
@@ -94,12 +96,12 @@ EPIC-001: User Authentication System
 
 1. Read PRD Requirements (REQ-###)
 2. Group related requirements into Features
-3. Map: `PRD Requirements → FEAT-###`
+3. Map: `PRD Requirements → F-###`
 
 ```markdown
-FEAT-001: Login/Logout
-- PRD Requirements: REQ-001, REQ-002
-- Parent Epic: EPIC-001
+F-001: Login/Logout
+- PRD Requirements: REQ-F-001, REQ-F-002
+- Parent Epic: E-001
 ```
 
 ### Phase 3: Story Definition
@@ -109,11 +111,11 @@ FEAT-001: Login/Logout
 3. Link Stories to Features
 
 ```markdown
-STORY-001: User Login with Email
+S-001: User Login with Email
 - As a registered user
 - I want to login with email and password
 - So that I can access my account
-- Parent Feature: FEAT-001
+- Parent Feature: F-001
 ```
 
 ### Phase 4: Task Decomposition
@@ -128,10 +130,10 @@ STORY-001: User Login with Email
 - Single responsibility
 
 ```markdown
-TASK-0001: Implement Login API Endpoint
-- Parent Story: STORY-001
+T-0001: Implement Login API Endpoint
+- Parent Story: S-001
 - Architecture Component: Auth Service
-- PRD Requirement: REQ-001
+- PRD Requirement: REQ-F-001
 ```
 
 ---
@@ -140,14 +142,20 @@ TASK-0001: Implement Login API Endpoint
 
 ### Sequential Assignment
 
-| Level | Format | Starting | Example |
-|-------|--------|----------|---------|
-| Epic | EPIC-### | 001 | EPIC-001 |
-| Feature | FEAT-### | 001 | FEAT-001 |
-| Story | STORY-### | 001 | STORY-001 |
-| Task | TASK-#### | 0001 | TASK-0001 |
+Each level uses **independent sequential numbering**. Parent relationship is stored in **metadata**, not ID.
 
-- IDs are globally unique within the project
+See `90_admin/id-conventions.md` for full details.
+
+| Level | Format | Range | Example |
+|-------|--------|-------|----------|
+| Epic | E-### | 001-999 | E-001 |
+| Feature | F-### | 001-999 | F-001 |
+| Story | S-### | 001-999 | S-001 |
+| Task | T-#### | 0001-9999 | T-0001 |
+
+**Rules:**
+- IDs are flat (no ancestry encoded)
+- Parent relationship stored in document metadata
 - Never reuse IDs, even for deleted items
 - IDs persist through modifications (per AGENTS.md §6.3)
 
@@ -157,21 +165,24 @@ TASK-0001: Implement Login API Endpoint
 
 ### File Location
 ```
-10_drafts/ko-KR/tasks/TASK-####.md
+10_drafts/ko-KR/tasks/{ID}-{slug}.md
 ```
 
+Example: `T-0001-validate-email.md`
+
 ### Template Compliance
-Use `90_admin/task-template.md` for all Tasks. Fill **every section**.
+Use `90_admin/task-templates/task.template.md` for all Tasks. Fill **every section**.
 
 ### Required Sections
 
 #### Traceability (Mandatory)
 | Reference | Required | Example |
 |-----------|----------|---------|
-| PRD Requirement | ✅ Yes | REQ-001 |
-| Parent Story | ✅ Yes | STORY-001 |
+| PRD Requirement | ✅ Yes | REQ-F-001 |
+| Parent Story | ✅ Yes | S-001 |
+| Parent Feature | ✅ Yes | F-001 |
+| Parent Epic | ✅ Yes | E-001 |
 | Architecture Decision | Recommended | ADR-003 |
-| Parent Feature | Recommended | FEAT-001 |
 
 #### Acceptance Criteria (Critical)
 
@@ -210,7 +221,7 @@ Use `90_admin/task-template.md` for all Tasks. Fill **every section**.
 ```
 
 ### Template
-Use `90_admin/hierarchy-template.md`.
+Use templates in `90_admin/task-templates/` (epic, feature, story, task).
 
 ### Required Sections
 1. Structure Overview (ASCII tree)
@@ -233,8 +244,8 @@ Every REQ-ID must be covered by at least one Task.
 ```markdown
 | REQ-ID | Covered By | Status |
 |--------|------------|--------|
-| REQ-001 | TASK-0001, TASK-0002 | ✅ Covered |
-| REQ-002 | (none) | ❌ Gap |
+| REQ-F-001 | T-0001, T-0002 | ✅ Covered |
+| REQ-F-002 | (none) | ❌ Gap |
 ```
 
 ### Architecture Component Coverage
@@ -243,7 +254,7 @@ Every Component should have associated Tasks.
 ```markdown
 | Component | Covered By | Status |
 |-----------|------------|--------|
-| Auth Service | TASK-0001 | ✅ Covered |
+| Auth Service | T-0001 | ✅ Covered |
 | Cache Layer | (none) | ⚠️ Review |
 ```
 
@@ -271,13 +282,13 @@ When decomposing, you may discover hidden complexity:
 4. Request Human confirmation
 
 ```markdown
-## Complexity Alert: TASK-0005
+## Complexity Alert: T-0003
 
 **Issue**: This task involves both user validation and notification sending.
 
 **Recommendation**: Split into:
-- TASK-0005A: User validation logic
-- TASK-0005B: Notification dispatch
+- T-0003: User validation logic
+- T-0004: Notification dispatch
 
 **Awaiting**: Human decision
 ```
@@ -290,8 +301,8 @@ When decomposing, you may discover hidden complexity:
 
 | File | Location | Description |
 |------|----------|-------------|
-| hierarchy.md | `10_drafts/ko-KR/tasks/` | Full hierarchy structure |
-| TASK-####.md | `10_drafts/ko-KR/tasks/` | Individual task files |
+| index.md | `10_drafts/ko-KR/tasks/` | Full hierarchy structure |
+| {ID}-{slug}.md | `10_drafts/ko-KR/tasks/` | Individual task files |
 
 ### Completion Summary
 
@@ -313,7 +324,7 @@ When decomposing, you may discover hidden complexity:
 - Component X not mapped
 
 ### Complexity Alerts
-- TASK-#### requires Human decision
+- T-#### requires Human decision
 
 ### Next Steps
 1. Human review of hierarchy
@@ -343,7 +354,7 @@ You MUST NOT:
 1. Orchestrator invokes Task Decomposition Agent
 2. Agent verifies PRD + Architecture exist
 3. Agent performs decomposition
-4. Agent generates hierarchy.md + TASK-####.md files
+4. Agent generates hierarchy.md + T-####.md files
 5. Agent reports summary to Orchestrator:
    - Task count
    - Coverage status

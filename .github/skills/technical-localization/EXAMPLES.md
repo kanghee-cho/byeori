@@ -103,7 +103,7 @@ Glossary note:
 - Convert narrative into structured, testable requirements.
 - Preserve requirement strength (MUST/SHOULD/MAY).
 - Use consistent headings and bullets.
-- Keep identifiers unchanged (TASK-####, requirement IDs).
+- Keep identifiers unchanged (E-###, F-###, S-###, T-####, REQ-F-###, etc.).
 
 ### Don't
 - Don't add features.
