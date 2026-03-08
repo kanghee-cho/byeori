@@ -5,6 +5,8 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
+**English** | [한국어](README_KO.md)
+
 ## The Philosophy: Design First, Code Later
 
 Many AI coding assistants fail because they jump straight into writing code based on vague prompts. **Byeori does not write a single line of code.** Instead, it acts as your ultimate software architect and product manager. You provide an idea, and Byeori's multi-agent system works top-down to generate crystal-clear, developer-ready documents. Once Byeori gives you the blueprint, any developer or AI coding tool can build the software flawlessly.
@@ -265,14 +267,238 @@ All drafts are created in `10_drafts/ko-KR/`.
 
 ## Getting Started
 
-*(Instructions for installing and running Byeori will be added here as the project develops.)*
+### Prerequisites
+
+- **VS Code** with Copilot Chat extension
+- **Git** for version control
+
+### Installation
 
 ```bash
-# Example placeholder for future installation
+# Clone the repository
 git clone https://github.com/kanghee-cho/byeori.git
 cd byeori
-# Install dependencies and run
 ```
+
+### Quick Start: Create Your First Project
+
+#### 1. Create a new project using the shell script
+
+```bash
+# Unix/macOS/Linux
+./scripts/create-project.sh my-app-name
+
+# Windows PowerShell
+.\scripts\create-project.ps1 my-app-name
+```
+
+This creates a project structure in `projects/my-app-name/`.
+
+#### 2. Add your initial context
+
+Place your idea, requirements, or background materials in:
+```
+projects/my-app-name/00_context/initial-idea.md
+```
+
+#### 3. Invoke agents via VS Code Chat
+
+Open VS Code and use the Chat panel to invoke Byeori agents:
+
+```
+@product-prd Generate a PRD for my app based on 00_context/initial-idea.md
+```
+
+The agent will create `projects/my-app-name/10_drafts/ko-KR/prd.md`.
+
+#### 4. Continue the documentation chain
+
+```
+@system-architect Generate architecture from the PRD
+@software-design Generate design from PRD and Architecture
+@api-spec Generate API specification from Design
+@data-schema Generate database schema from Design
+@task-decomposition Break down into executable tasks
+```
+
+#### 5. Review and approve
+
+```
+@spec-reviewer Review the PRD document
+@task-reviewer Review the tasks for AC completeness
+```
+
+Review results appear in `20_reviews/`. Human approval is required before proceeding.
+
+#### 6. Version and translate
+
+After approval, create a version snapshot and translate:
+```bash
+# Create version snapshot
+cp -r projects/my-app-name/10_drafts/ko-KR/* projects/my-app-name/40_versions/v1.0/ko-KR/
+```
+
+```
+@translation Translate all documents to en-US
+@translation-reviewer Review translations
+```
+
+#### 7. Check release readiness
+
+```
+@release-gatekeeper Check if v1.0 is ready for release
+```
+
+If all gates pass, the release bundle is created in `50_release/v1.0/` (en-US only).
+
+---
+
+## Command-Line Interface (CLI)
+
+Byeori provides a CLI wrapper for common operations.
+
+### Main CLI: `byeori.sh` / `byeori.ps1`
+
+```bash
+# Unix/macOS/Linux
+./scripts/byeori.sh <command> [options]
+
+# Windows PowerShell
+.\scripts\byeori.ps1 <command> [options]
+```
+
+#### Commands
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `agent <name> <project>` | Invoke an agent for a project | `./scripts/byeori.sh agent prd my-app` |
+| `list` | List all available agents | `./scripts/byeori.sh list` |
+| `status <project>` | Show project documentation status | `./scripts/byeori.sh status my-app` |
+| `diff <project> <v1> <v2>` | Compare two versions | `./scripts/byeori.sh diff my-app v1.0 v1.1` |
+| `create <project>` | Create a new project | `./scripts/byeori.sh create my-app` |
+| `help` | Show help message | `./scripts/byeori.sh help` |
+
+#### Agent Shortcuts
+
+| Shortcut | Full Agent Name |
+|----------|-----------------|
+| `prd` | product-prd |
+| `architect` | system-architect |
+| `design` | software-design |
+| `api` | api-spec |
+| `db` | data-schema |
+| `tasks` | task-decomposition |
+| `spec-review` | spec-reviewer |
+| `task-review` | task-reviewer |
+| `translate` | translation |
+| `translate-review` | translation-reviewer |
+| `impact` | impact-analyzer |
+| `release` | release-gatekeeper |
+| `orchestrator` | orchestrator |
+
+#### Example Workflow via CLI
+
+```bash
+# Create a new project
+./scripts/byeori.sh create my-app
+
+# Generate documentation chain
+./scripts/byeori.sh agent prd my-app
+./scripts/byeori.sh agent architect my-app
+./scripts/byeori.sh agent design my-app
+./scripts/byeori.sh agent api my-app
+./scripts/byeori.sh agent db my-app
+./scripts/byeori.sh agent tasks my-app
+
+# Review
+./scripts/byeori.sh agent spec-review my-app
+./scripts/byeori.sh agent task-review my-app
+
+# Check status
+./scripts/byeori.sh status my-app
+```
+
+### Version Diff Tool: `version-diff.sh` / `version-diff.ps1`
+
+Compare two versions of a project to analyze changes.
+
+```bash
+# Unix/macOS/Linux
+./scripts/version-diff.sh <project> <v1> <v2> [options]
+
+# Windows PowerShell
+.\scripts\version-diff.ps1 -Project <project> -V1 <v1> -V2 <v2> [options]
+```
+
+#### Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--lang` / `-Lang` | Language to compare (ko-KR, en-US) | ko-KR |
+| `--doc` / `-Doc` | Specific document to compare | all |
+| `--output` / `-Output` | Output file path | stdout |
+| `--summary` / `-Summary` | Show summary only | false |
+
+#### Examples
+
+```bash
+# Compare all ko-KR documents between v1.0 and v1.1
+./scripts/version-diff.sh my-app v1.0 v1.1
+
+# Compare only the PRD document
+./scripts/version-diff.sh my-app v1.0 v1.1 --doc prd.md
+
+# Compare en-US translations
+./scripts/version-diff.sh my-app v1.0 v1.1 --lang en-US
+
+# Save diff report to file
+./scripts/version-diff.sh my-app v1.0 v1.1 --output diff-report.md
+
+# Quick summary only
+./scripts/version-diff.sh my-app v1.0 v1.1 --summary
+```
+
+---
+
+### Available Agents
+
+| Agent | Command | Purpose |
+|-------|---------|---------|
+| PRD Agent | `@product-prd` | Generate Product Requirements Document |
+| System Architect | `@system-architect` | Generate Architecture Document |
+| Software Design | `@software-design` | Generate Design Document |
+| API Spec | `@api-spec` | Generate API Specification |
+| Data Schema | `@data-schema` | Generate Database Schema |
+| Task Decomposition | `@task-decomposition` | Break down into Tasks |
+| Spec Reviewer | `@spec-reviewer` | Review specification documents |
+| Task Reviewer | `@task-reviewer` | Review tasks for AC completeness |
+| Translation | `@translation` | Translate ko-KR → en-US |
+| Translation Reviewer | `@translation-reviewer` | Review translations |
+| Impact Analyzer | `@impact-analyzer` | Analyze change impact |
+| Release Gatekeeper | `@release-gatekeeper` | Validate release readiness |
+| Orchestrator | `@orchestrator` | Control workflow (meta-agent) |
+
+### Workflow Tips
+
+1. **Always start from PRD** — All other documents depend on it
+2. **Review before approval** — AI reviews are mandatory before Human approval
+3. **One change at a time** — Modify Drafts, then re-review
+4. **Check with Orchestrator** — `@orchestrator what's the current state?`
+5. **Human approval is required** — No AI agent can approve documents
+
+---
+
+## Troubleshooting
+
+Common issues and solutions are documented in the [Troubleshooting Guide](docs/troubleshooting.md).
+
+Quick links:
+- [Agent not responding](docs/troubleshooting.md#11-에이전트가-응답하지-않음)
+- [Document generation failures](docs/troubleshooting.md#2-문서-생성-문제)
+- [Version/Release issues](docs/troubleshooting.md#4-버전릴리스-문제)
+- [CLI errors](docs/troubleshooting.md#6-cli-스크립트-문제)
+
+---
 
 ## Contributing
 

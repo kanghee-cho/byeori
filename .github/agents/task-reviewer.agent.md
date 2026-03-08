@@ -25,7 +25,7 @@ You operate under the following authority order:
 1. `AGENTS.md` (Byeori Constitution) — **always wins**
 2. Human instructions (Project Owner)
 3. This agent definition (`task-reviewer.agent.md`)
-4. Template: `90_admin/task-template.md`
+4. Template: `90_admin/task-templates/task.template.md`
 
 ---
 
@@ -35,7 +35,7 @@ You operate under the following authority order:
 
 | Document | Location |
 |----------|----------|
-| Individual Tasks | `10_drafts/ko-KR/tasks/TASK-####.md` |
+| Individual Tasks | `10_drafts/ko-KR/tasks/T-####.md` |
 | Task Hierarchy | `10_drafts/ko-KR/tasks/hierarchy.md` |
 
 ### Review Categories
@@ -65,9 +65,9 @@ You operate under the following authority order:
 ```markdown
 | ID | Severity | Category | Task ID | Finding | Recommendation |
 |----|----------|----------|---------|---------|----------------|
-| F-001 | Critical | ACQ | TASK-0001 | AC-1 is not testable: "적절히 처리" | Specify exact expected behavior |
-| F-002 | Major | COM | TASK-0002 | Missing error case AC | Add at least 1 negative AC |
-| F-003 | Minor | TRA | TASK-0003 | ADR reference missing | Add ADR-### if applicable |
+| F-001 | Critical | ACQ | T-0001 | AC-1 is not testable: "적절히 처리" | Specify exact expected behavior |
+| F-002 | Major | COM | T-0002 | Missing error case AC | Add at least 1 negative AC |
+| F-003 | Minor | TRA | T-0003 | ADR reference missing | Add ADR-### if applicable |
 ```
 
 ---
@@ -165,7 +165,7 @@ Recommend splitting a Task when:
 ### Split Recommendation Format
 
 ```markdown
-## Split Recommendation: TASK-####
+## Split Recommendation: T-0005
 
 **Trigger**: AC count exceeds 5 (currently 7)
 
@@ -178,9 +178,9 @@ Recommend splitting a Task when:
 **Proposed Split**:
 | New Task | Scope | AC Count |
 |----------|-------|----------|
-| TASK-####-A | User validation + Password hashing | 3 |
-| TASK-####-B | Session creation | 2 |
-| TASK-####-C | Notification dispatch | 2 |
+| T-0005 | User validation + Password hashing | 3 |
+| T-0006 | Session creation | 2 |
+| T-0007 | Notification dispatch | 2 |
 
 **Status**: Awaiting Human decision
 ```
@@ -205,7 +205,9 @@ Recommend splitting a Task when:
 
 #### Traceability (TRA)
 - [ ] PRD Requirement (REQ-###) is linked
-- [ ] Parent Story (STORY-###) is linked
+- [ ] Parent Story (S-###) is linked
+- [ ] Parent Feature (F-###) is linked
+- [ ] Parent Epic (E-###) is linked
 - [ ] Links are valid (referenced items exist)
 
 #### Dependencies (DEP)
@@ -223,7 +225,7 @@ Recommend splitting a Task when:
 
 ### Hierarchy Review Checklist
 
-- [ ] All Tasks in hierarchy.md have corresponding TASK-####.md files
+- [ ] All Tasks in hierarchy.md have corresponding T-####.md files
 - [ ] Coverage Matrix is accurate
 - [ ] No orphan Tasks (without Story link)
 - [ ] Statistics are correct
@@ -267,7 +269,7 @@ Example: `20_reviews/task-review/review-tasks-2026-03-06.md`
 
 ## Findings by Task
 
-### TASK-0001: (Title)
+### T-0001: (Title)
 | ID | Severity | Category | Finding | Recommendation |
 |----|----------|----------|---------|----------------|
 | F-001 | Critical | ACQ | ... | ... |
@@ -276,14 +278,14 @@ Example: `20_reviews/task-review/review-tasks-2026-03-06.md`
 
 ---
 
-### TASK-0002: (Title)
+### T-0002: (Title)
 ...
 
 ---
 
 ## Split Recommendations
 
-### TASK-0005
+### T-0003
 (split details)
 
 ---
@@ -302,7 +304,7 @@ Example: `20_reviews/task-review/review-tasks-2026-03-06.md`
 
 | Task ID | Location | Expression | Severity |
 |---------|----------|------------|----------|
-| TASK-0001 | AC-2 Then | "적절히" | Critical |
+| T-0001 | AC-2 Then | "적절히" | Critical |
 
 ---
 

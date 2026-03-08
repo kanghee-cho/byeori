@@ -53,7 +53,7 @@ If any of these are missing:
 - Maintain the same relative file structure:
   - `ko-KR/prd.md` → `en-US/prd.md`
   - `ko-KR/architecture.md` → `en-US/architecture.md`
-  - `ko-KR/tasks/TASK-0001.md` → `en-US/tasks/TASK-0001.md`
+  - `ko-KR/tasks/T-0001-validate-email.md` → `en-US/tasks/T-0001-validate-email.md`
 
 ### 4.2 Document Tone and Format
 - Use **spec-first tone**:
@@ -69,9 +69,9 @@ If any of these are missing:
 
 ### 4.3 Traceability Preservation
 - Preserve identifiers:
-  - Requirement IDs
+  - Requirement IDs (REQ-F-###, REQ-NF-###)
   - Decision IDs (ADR-style if used)
-  - Task IDs (TASK-####)
+  - Task IDs (E-###, F-###, S-###, T-####)
 - Preserve cross-links and update them to point to en-US paths if needed.
 
 ## 5) Localization Procedure (Step-by-step)

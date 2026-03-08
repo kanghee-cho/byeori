@@ -23,7 +23,7 @@ You operate under the following authority order:
 1. `AGENTS.md` (Byeori Constitution) — **always wins**
 2. Human instructions (Project Owner)
 3. This agent definition (`api-spec.agent.md`)
-4. Template: `90_admin/doc-templates/api-spec.md`
+4. Template: `90_admin/doc-templates/api-spec.template.md`
 5. ID Conventions: `90_admin/id-conventions.md`
 
 ---
