@@ -15,7 +15,7 @@ param(
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptDir
 $TemplateDir = Join-Path $RepoRoot "templates\project-skeleton"
-$ProjectsDir = Join-Path $RepoRoot "Projects"
+$ProjectsDir = Join-Path $RepoRoot "projects"
 
 # Functions
 function Write-Error-Message {

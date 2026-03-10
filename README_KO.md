@@ -287,6 +287,8 @@ cd byeori
 
 ### 빠른 시작: 첫 프로젝트 만들기
 
+> **핵심 원칙**: 벼리에서는 **Orchestrator가 워크플로우를 제어**합니다. 사용자는 Orchestrator와 대화하고, Orchestrator가 적절한 에이전트를 순서대로 호출합니다.
+
 #### 1. 쉘 스크립트로 새 프로젝트 생성
 
 ```bash
@@ -306,55 +308,86 @@ cd byeori
 projects/my-app-name/00_context/initial-idea.md
 ```
 
-#### 3. VS Code Chat으로 에이전트 호출
+#### 3. Orchestrator로 워크플로우 시작
 
-VS Code를 열고 Chat 패널에서 벼리 에이전트를 호출:
-
-```
-@product-prd 00_context/initial-idea.md를 기반으로 PRD 생성해줘
-```
-
-에이전트가 `projects/my-app-name/10_drafts/ko-KR/prd.md`를 생성합니다.
-
-#### 4. 문서 체인 계속하기
+VS Code를 열고 Chat 패널에서 **Orchestrator**를 호출:
 
 ```
-@system-architect PRD에서 아키텍처 생성해줘
-@software-design PRD와 아키텍처에서 설계 생성해줘
-@api-spec 설계에서 API 사양 생성해줘
-@data-schema 설계에서 데이터베이스 스키마 생성해줘
-@task-decomposition 실행 가능한 태스크로 분해해줘
+@orchestrator 00_context/initial-idea.md를 기반으로 문서 생성 워크플로우 시작해줘
 ```
 
-#### 5. 리뷰 및 승인
+Orchestrator가 자동으로:
+1. **PRD Agent** 호출 → PRD 생성
+2. **System Architect** 호출 → 아키텍처 생성
+3. **Software Design** 호출 → 설계 생성
+4. **API Spec / Data Schema** 호출 → API 및 DB 스키마 생성
+5. **Task Decomposition** 호출 → 태스크 분해
+6. 인간 승인이 필요한 시점에서 대기
+
+모든 초안은 `10_drafts/ko-KR/`에 생성됩니다.
+
+#### 4. 상태 확인 및 진행
+
+언제든 현재 상태를 확인하고 다음 단계로 진행:
 
 ```
-@spec-reviewer PRD 문서 리뷰해줘
-@task-reviewer AC 완전성 리뷰해줘
+@orchestrator 현재 상태는?
+@orchestrator 다음 단계로 진행해줘
 ```
 
-리뷰 결과는 `20_reviews/`에 나타납니다. 진행 전 인간 승인이 필요합니다.
+Orchestrator가 리뷰 단계에 도달하면 자동으로 **Spec Reviewer**와 **Task Reviewer**를 호출합니다.
+리뷰 결과는 `20_reviews/`에 저장됩니다.
+
+#### 5. 인간 승인 (필수 게이트)
+
+Orchestrator가 "인간 승인 필요"라고 알리면:
+
+1. `20_reviews/`의 리뷰 결과 검토
+2. 필요시 `10_drafts/`의 문서 수정
+3. `30_approvals/`에 승인 기록 추가
+4. Orchestrator에게 승인 완료 알림:
+
+```
+@orchestrator 승인 완료했어. 다음 단계로 진행해줘
+```
+
+> ⚠️ **AI 에이전트는 문서를 승인할 수 없습니다.** 인간 승인은 필수 게이트입니다.
 
 #### 6. 버전 관리 및 번역
 
-승인 후, 버전 스냅샷을 생성하고 번역:
-```bash
-# 버전 스냅샷 생성
-cp -r projects/my-app-name/10_drafts/ko-KR/* projects/my-app-name/40_versions/v1.0/ko-KR/
-```
+승인 후, Orchestrator에게 버전 생성 요청:
 
 ```
-@translation 모든 문서를 en-US로 번역해줘
-@translation-reviewer 번역 리뷰해줘
+@orchestrator v1.0 버전 스냅샷 생성하고 번역 진행해줘
 ```
+
+Orchestrator가:
+1. `40_versions/v1.0/ko-KR/`에 불변 스냅샷 생성
+2. **Translation Agent** 호출 → en-US 번역
+3. **Translation Reviewer** 호출 → 번역 검증
 
 #### 7. 릴리스 준비 상태 확인
 
 ```
-@release-gatekeeper v1.0이 릴리스 준비되었는지 확인해줘
+@orchestrator v1.0 릴리스 준비 상태 확인해줘
 ```
 
+Orchestrator가 **Release Gatekeeper**를 호출하여 검증합니다.
 모든 게이트를 통과하면, `50_release/v1.0/` (en-US만)에 릴리스 번들이 생성됩니다.
+
+---
+
+### 개별 에이전트 직접 호출 (고급)
+
+특정 작업만 수행하려면 개별 에이전트를 직접 호출할 수도 있습니다:
+
+```
+@product-prd PRD만 생성해줘
+@spec-reviewer PRD 문서만 리뷰해줘
+@translation 특정 문서만 번역해줘
+```
+
+단, 라이프사이클 규칙과 승인 게이트는 여전히 적용됩니다.
 
 ---
 
@@ -485,10 +518,10 @@ cp -r projects/my-app-name/10_drafts/ko-KR/* projects/my-app-name/40_versions/v1
 
 ### 워크플로우 팁
 
-1. **항상 PRD부터 시작** — 다른 모든 문서가 PRD에 의존
-2. **승인 전에 리뷰** — AI 리뷰는 인간 승인 전에 필수
-3. **한 번에 하나씩 변경** — 초안 수정 후 재리뷰
-4. **Orchestrator에게 확인** — `@orchestrator 현재 상태가 어때?`
+1. **항상 Orchestrator로 시작** — Orchestrator가 적절한 에이전트를 순서대로 호출
+2. **상태 자주 확인** — `@orchestrator 현재 상태는?`로 진행 현황 확인
+3. **승인 전에 리뷰** — AI 리뷰는 인간 승인 전에 필수
+4. **한 번에 하나씩 변경** — 초안 수정 후 재리뷰
 5. **인간 승인 필수** — AI 에이전트는 문서를 승인할 수 없음
 
 ---

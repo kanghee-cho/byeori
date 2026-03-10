@@ -282,6 +282,8 @@ cd byeori
 
 ### Quick Start: Create Your First Project
 
+> **Core Principle**: In Byeori, the **Orchestrator controls the workflow**. You interact with the Orchestrator, and it invokes the appropriate agents in order.
+
 #### 1. Create a new project using the shell script
 
 ```bash
@@ -301,55 +303,86 @@ Place your idea, requirements, or background materials in:
 projects/my-app-name/00_context/initial-idea.md
 ```
 
-#### 3. Invoke agents via VS Code Chat
+#### 3. Start the workflow with Orchestrator
 
-Open VS Code and use the Chat panel to invoke Byeori agents:
-
-```
-@product-prd Generate a PRD for my app based on 00_context/initial-idea.md
-```
-
-The agent will create `projects/my-app-name/10_drafts/ko-KR/prd.md`.
-
-#### 4. Continue the documentation chain
+Open VS Code and invoke the **Orchestrator** in the Chat panel:
 
 ```
-@system-architect Generate architecture from the PRD
-@software-design Generate design from PRD and Architecture
-@api-spec Generate API specification from Design
-@data-schema Generate database schema from Design
-@task-decomposition Break down into executable tasks
+@orchestrator Start documentation workflow based on 00_context/initial-idea.md
 ```
 
-#### 5. Review and approve
+The Orchestrator will automatically:
+1. Invoke **PRD Agent** → Generate PRD
+2. Invoke **System Architect** → Generate Architecture
+3. Invoke **Software Design** → Generate Design
+4. Invoke **API Spec / Data Schema** → Generate API and DB schema
+5. Invoke **Task Decomposition** → Break down into tasks
+6. Pause when human approval is required
+
+All drafts are created in `10_drafts/ko-KR/`.
+
+#### 4. Check status and proceed
+
+Check current status and proceed to the next step at any time:
 
 ```
-@spec-reviewer Review the PRD document
-@task-reviewer Review the tasks for AC completeness
+@orchestrator What's the current status?
+@orchestrator Proceed to the next step
 ```
 
-Review results appear in `20_reviews/`. Human approval is required before proceeding.
+When the Orchestrator reaches the review phase, it automatically invokes **Spec Reviewer** and **Task Reviewer**.
+Review results are saved in `20_reviews/`.
+
+#### 5. Human Approval (Required Gate)
+
+When the Orchestrator indicates "Human approval required":
+
+1. Review the results in `20_reviews/`
+2. Modify documents in `10_drafts/` if needed
+3. Add approval record to `30_approvals/`
+4. Notify the Orchestrator:
+
+```
+@orchestrator Approval completed. Proceed to the next step.
+```
+
+> ⚠️ **AI agents cannot approve documents.** Human approval is a mandatory gate.
 
 #### 6. Version and translate
 
-After approval, create a version snapshot and translate:
-```bash
-# Create version snapshot
-cp -r projects/my-app-name/10_drafts/ko-KR/* projects/my-app-name/40_versions/v1.0/ko-KR/
-```
+After approval, request version creation from the Orchestrator:
 
 ```
-@translation Translate all documents to en-US
-@translation-reviewer Review translations
+@orchestrator Create v1.0 version snapshot and proceed with translation
 ```
+
+The Orchestrator will:
+1. Create immutable snapshot in `40_versions/v1.0/ko-KR/`
+2. Invoke **Translation Agent** → Translate to en-US
+3. Invoke **Translation Reviewer** → Validate translation
 
 #### 7. Check release readiness
 
 ```
-@release-gatekeeper Check if v1.0 is ready for release
+@orchestrator Check release readiness for v1.0
 ```
 
-If all gates pass, the release bundle is created in `50_release/v1.0/` (en-US only).
+The Orchestrator invokes **Release Gatekeeper** for validation.
+If all gates pass, a release bundle is created in `50_release/v1.0/` (en-US only).
+
+---
+
+### Direct Agent Invocation (Advanced)
+
+To perform specific tasks only, you can invoke individual agents directly:
+
+```
+@product-prd Generate PRD only
+@spec-reviewer Review PRD document only
+@translation Translate specific document only
+```
+
+Note: Lifecycle rules and approval gates still apply.
 
 ---
 
@@ -480,10 +513,10 @@ Compare two versions of a project to analyze changes.
 
 ### Workflow Tips
 
-1. **Always start from PRD** — All other documents depend on it
-2. **Review before approval** — AI reviews are mandatory before Human approval
-3. **One change at a time** — Modify Drafts, then re-review
-4. **Check with Orchestrator** — `@orchestrator what's the current state?`
+1. **Always start with Orchestrator** — Orchestrator invokes appropriate agents in order
+2. **Check status frequently** — Use `@orchestrator What's the current status?` to track progress
+3. **Review before approval** — AI reviews are mandatory before Human approval
+4. **One change at a time** — Modify Drafts, then re-review
 5. **Human approval is required** — No AI agent can approve documents
 
 ---
